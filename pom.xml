@@ -12,11 +12,12 @@
     <artifactId>BlogApp</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>BlogApp</name>
-    <description>BlogApp</description>
+    <description>Blog Api for Blog Project</description>
     <properties>
         <java.version>11</java.version>
-        <kotlin.versin>1.6.0</kotlin.versin>
-        <jacksonmodule.version>2.13.0</jacksonmodule.version>
+        <kotlin.version>1.6.0</kotlin.version>
+        <mysql.version>8.0.27</mysql.version>
+        <openapi.version>1.5.12</openapi.version>
     </properties>
     <dependencies>
 
@@ -38,18 +39,18 @@
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
-            <scope>runtime</scope>
+            <version>${mysql.version}</version>
         </dependency>
-        <dependency>
+        <!--<dependency>
             <groupId>org.flywaydb</groupId>
             <artifactId>flyway-core</artifactId>
-        </dependency>
+        </dependency>-->
 
         <!-- KOTLIN  -->
         <dependency>
             <groupId>org.jetbrains.kotlin</groupId>
             <artifactId>kotlin-stdlib-jdk8</artifactId>
-            <version>${kotlin.versin}</version>
+            <version>${kotlin.version}</version>
         </dependency>
         <dependency>
             <groupId>org.jetbrains.kotlin</groupId>
@@ -59,7 +60,13 @@
         <dependency>
             <groupId>com.fasterxml.jackson.module</groupId>
             <artifactId>jackson-module-kotlin</artifactId>
-            <version>${jacksonmodule.version}</version>
+        </dependency>
+
+        <!-- OPENAPI UI -->
+        <dependency>
+            <groupId>org.springdoc</groupId>
+            <artifactId>springdoc-openapi-ui</artifactId>
+            <version>${openapi.version}</version>
         </dependency>
 
         <!-- FOR DEVELOPER -->
@@ -69,11 +76,11 @@
             <scope>runtime</scope>
             <optional>true</optional>
         </dependency>
-        <dependency>
+        <!--<dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
             <scope>runtime</scope>
-        </dependency>
+        </dependency>-->
 
         <!-- TEST -->
         <dependency>
