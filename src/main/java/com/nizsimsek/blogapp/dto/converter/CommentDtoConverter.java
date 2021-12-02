@@ -15,8 +15,8 @@ public class CommentDtoConverter {
         return new CommentDto(
                 comment.getId(),
                 comment.getContent(),
-                comment.getLike(),
-                comment.getDislike(),
+                comment.getLikes(),
+                comment.isLiked(),
                 comment.getCreatedDate(),
                 comment.getUpdatedDate()
         );

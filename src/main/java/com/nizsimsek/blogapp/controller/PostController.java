@@ -44,4 +44,9 @@ public class PostController {
     public ResponseEntity<String> deletePostById(@PathVariable String id) {
         return ResponseEntity.ok(postService.deletePostById(id));
     }
+
+    @PostMapping("/like/{id}")
+    public ResponseEntity<PostDto> likePostByPostId(@PathVariable String id) {
+        return ResponseEntity.ok(postService.likePostByPostId(id));
+    }
 }

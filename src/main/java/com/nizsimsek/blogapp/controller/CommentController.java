@@ -1,6 +1,7 @@
 package com.nizsimsek.blogapp.controller;
 
 import com.nizsimsek.blogapp.dto.CommentDto;
+import com.nizsimsek.blogapp.dto.PostDto;
 import com.nizsimsek.blogapp.dto.request.CreateCommentRequest;
 import com.nizsimsek.blogapp.dto.request.UpdateCommentRequest;
 import com.nizsimsek.blogapp.service.CommentService;
@@ -43,5 +44,10 @@ public class CommentController {
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteCommentById(@PathVariable String id) {
         return ResponseEntity.ok(commentService.deleteCommentById(id));
+    }
+
+    @PostMapping("/like/{id}")
+    public ResponseEntity<CommentDto> likeCommentByCommentId(@PathVariable String id) {
+        return ResponseEntity.ok(commentService.likeCommentByCommentId(id));
     }
 }

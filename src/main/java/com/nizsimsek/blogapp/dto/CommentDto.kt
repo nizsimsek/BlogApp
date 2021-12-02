@@ -8,12 +8,13 @@ data class CommentDto @JvmOverloads constructor (
 
         val id: String?,
         val content: String,
-        val like: Long,
-        val dislike: Long,
+        val likes: Long,
+        val isLiked: Boolean?,
         val createdDate: LocalDateTime,
 
         @JsonInclude(JsonInclude.Include.NON_NULL)
         val updatedDate: LocalDateTime? = null,
         val author: UserDto? = null,
-        val post: PostDto? = null
+        val post: PostDto? = null,
+        val likedUserList: List<UserDto>? = emptyList(),
 )

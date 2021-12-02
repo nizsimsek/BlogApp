@@ -16,8 +16,8 @@ public class PostDtoConverter {
                 post.getId(),
                 post.getTitle(),
                 post.getContent(),
-                post.getLike(),
-                post.getDislike(),
+                post.getLikes(),
+                post.isLiked(),
                 post.getCreatedDate(),
                 post.getUpdatedDate()
         );

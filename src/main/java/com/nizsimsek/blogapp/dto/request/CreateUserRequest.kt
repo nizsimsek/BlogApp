@@ -1,6 +1,5 @@
 package com.nizsimsek.blogapp.dto.request
 
-import org.hibernate.validator.constraints.UniqueElements
 import javax.validation.constraints.Email
 import javax.validation.constraints.NotBlank
 
@@ -11,7 +10,6 @@ data class CreateUserRequest (
 
         @field:NotBlank(message = "The email value must not be empty")
         @field:Email
-        @field:UniqueElements
         val email: String,
 
         @field:NotBlank(message = "The firstName value must not be empty")

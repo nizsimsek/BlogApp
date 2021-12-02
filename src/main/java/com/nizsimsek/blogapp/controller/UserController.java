@@ -1,7 +1,9 @@
 package com.nizsimsek.blogapp.controller;
 
+import com.nizsimsek.blogapp.dto.PostDto;
 import com.nizsimsek.blogapp.dto.UserDto;
 import com.nizsimsek.blogapp.dto.request.CreateUserRequest;
+import com.nizsimsek.blogapp.dto.request.RoleToUserRequest;
 import com.nizsimsek.blogapp.dto.request.UpdateUserRequest;
 import com.nizsimsek.blogapp.service.UserService;
 import org.springframework.http.ResponseEntity;
@@ -23,6 +25,12 @@ public class UserController {
     @PostMapping
     public ResponseEntity<UserDto> createUser(@Valid @RequestBody CreateUserRequest request) {
         return ResponseEntity.ok(userService.createUser(request));
+    }
+
+    @PostMapping("/add-role")
+    public ResponseEntity<UserDto> addRoleToUser(@Valid @RequestBody RoleToUserRequest request) {
+        userService.addRoleToUser(request.getUsername(), request.getRoleName());
+        return ResponseEntity.ok().build();
     }
 
     @GetMapping

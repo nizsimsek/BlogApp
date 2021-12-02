@@ -9,6 +9,8 @@ import com.nizsimsek.blogapp.model.Tag;
 import com.nizsimsek.blogapp.model.Post;
 import com.nizsimsek.blogapp.model.User;
 import com.nizsimsek.blogapp.repository.PostRepository;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -34,8 +36,9 @@ public class PostService {
 
     public PostDto createPost(CreatePostRequest request) {
 
-        User user = userService.findUserById(request.getAuthorId());
-        List<Tag> tagList = tagService.findCategoriesByIdList(request.getTagIds());
+        Authentication userDetails = SecurityContextHolder.getContext().getAuthentication();
+        User user = userService.findUserByUsername(userDetails.getName());
+        List<Tag> tagList = tagService.findTagListByIdList(request.getTagIds());
 
         Post post = new Post(
                 request.getTitle(),
@@ -49,30 +52,40 @@ public class PostService {
 
     public List<PostDto> getPostDtoList() {
 
-        return postDtoConverter.convertToPostDtoList(findPosts());
+        Authentication userDetails = SecurityContextHolder.getContext().getAuthentication();
+        User user = userService.findUserByUsername(userDetails.getName());
+        List<Post> postList = findPostList();
+        postList.forEach(post -> post.setLiked(!postIsLiked(post.getId(), user.getId())));
+
+        return postDtoConverter.convertToPostDtoList(postList);
     }
 
     public PostDto getPostById(String id) {
 
-        return postDtoConverter.convert(findPostById(id));
+        Authentication userDetails = SecurityContextHolder.getContext().getAuthentication();
+        User user = userService.findUserByUsername(userDetails.getName());
+        Post post = findPostById(id);
+        post.setLiked(!postIsLiked(id, user.getId()));
+
+        return postDtoConverter.convert(post);
     }
 
     public PostDto updatePost(String id, UpdatePostRequest request) {
 
         Post post = findPostById(id);
-
-        List<Tag> tagList = tagService.findCategoriesByIdList(request.getTagIds());
+        List<Tag> tagList = tagService.findTagListByIdList(request.getTagIds());
 
         Post updatedPost = new Post(
                 post.getId(),
                 request.getTitle(),
                 request.getContent(),
-                post.getLike(),
-                post.getDislike(),
+                post.getLikes(),
+                post.isLiked(),
                 post.getCreatedDate(),
                 LocalDateTime.now(),
                 post.getAuthor(),
                 tagList,
+                post.getLikedUserList(),
                 post.getCommentList()
         );
 
@@ -88,13 +101,38 @@ public class PostService {
         return "Post has been deleted with this id : " + id;
     }
 
+    public PostDto likePostByPostId(String id) {
+
+        Authentication userDetails = SecurityContextHolder.getContext().getAuthentication();
+        User user = userService.findUserByUsername(userDetails.getName());
+        Post post = findPostById(id);
+
+        if (postIsLiked(id, user.getId())) {
+            post.getLikedUserList().add(user);
+            post.setLikes(post.getLikes() + 1);
+        } else {
+            post.getLikedUserList().remove(user);
+            post.setLikes(post.getLikes() - 1);
+        }
+
+        postRepository.save(post);
+
+        return getPostById(id);
+    }
+
+    protected Boolean postIsLiked(String postId, String userId) {
+
+        Integer trueOrFalse = postRepository.findIsLiked(postId, userId);
+        return trueOrFalse.equals(0);
+    }
+
     protected Post findPostById(String id) {
 
         return postRepository.findById(id)
                 .orElseThrow(() -> new GeneralNotFoundException("Post could not found this id : " + id));
     }
 
-    protected List<Post> findPosts() {
+    protected List<Post> findPostList() {
 
         return postRepository.findAll();
     }

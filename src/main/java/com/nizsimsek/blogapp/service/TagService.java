@@ -9,7 +9,6 @@ import com.nizsimsek.blogapp.model.Tag;
 import com.nizsimsek.blogapp.repository.TagRepository;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -36,7 +35,7 @@ public class TagService {
 
     public List<TagDto> getTagDtoList() {
 
-        return tagDtoConverter.convertToTagDtoList(findCategories());
+        return tagDtoConverter.convertToTagDtoList(findTags());
     }
 
     public TagDto getTagById(String id) {
@@ -72,15 +71,15 @@ public class TagService {
                 .orElseThrow(() -> new GeneralNotFoundException("Tag could not found this id : " + id));
     }
 
-    protected List<Tag> findCategories() {
+    protected List<Tag> findTags() {
 
         return tagRepository.findAll();
     }
 
-    protected List<Tag> findCategoriesByIdList(List<String> idList) {
+    protected List<Tag> findTagListByIdList(List<String> idList) {
 
         return Optional.of(tagRepository.findAllByIdIn(idList))
-                .filter(List::isEmpty)
-                .orElseThrow(() -> new GeneralNotFoundException("Categories could not find by ids : " + idList));
+                .filter(tag -> !tag.isEmpty())
+                .orElseThrow(() -> new GeneralNotFoundException("Tags could not find by ids : " + idList));
     }
 }

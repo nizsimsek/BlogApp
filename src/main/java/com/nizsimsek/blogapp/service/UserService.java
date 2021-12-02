@@ -5,22 +5,36 @@ import com.nizsimsek.blogapp.dto.converter.UserDtoConverter;
 import com.nizsimsek.blogapp.dto.request.CreateUserRequest;
 import com.nizsimsek.blogapp.dto.request.UpdateUserRequest;
 import com.nizsimsek.blogapp.exception.GeneralNotFoundException;
+import com.nizsimsek.blogapp.model.Role;
 import com.nizsimsek.blogapp.model.User;
 import com.nizsimsek.blogapp.repository.UserRepository;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 @Service
-public class UserService {
+public class UserService implements UserDetailsService {
 
     private final UserRepository userRepository;
     private final UserDtoConverter userDtoConverter;
+    private final RoleService roleService;
+    private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
     public UserService(UserRepository userRepository,
-                       UserDtoConverter userDtoConverter) {
+                       UserDtoConverter userDtoConverter,
+                       RoleService roleService,
+                       BCryptPasswordEncoder bCryptPasswordEncoder) {
         this.userRepository = userRepository;
         this.userDtoConverter = userDtoConverter;
+        this.roleService = roleService;
+        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
     }
 
     public UserDto createUser(CreateUserRequest request) {
@@ -30,7 +44,7 @@ public class UserService {
                 request.getEmail(),
                 request.getFirstName(),
                 request.getLastName(),
-                request.getPassword()
+                bCryptPasswordEncoder.encode(request.getPassword())
         );
 
         return userDtoConverter.convert(userRepository.save(user));
@@ -56,9 +70,11 @@ public class UserService {
                 request.getEmail(),
                 request.getFirstName(),
                 request.getLastName(),
-                request.getPassword(),
+                bCryptPasswordEncoder.encode(request.getPassword()),
+                user.getRoles(),
                 user.getPostList(),
-                user.getCommentList()
+                user.getCommentList(),
+                user.getLikedPostList()
         );
 
         return userDtoConverter.convert(userRepository.save(updatedUser));
@@ -71,6 +87,32 @@ public class UserService {
         userRepository.delete(user);
 
         return "User has been deleted with this id : " + id;
+    }
+
+    public void addRoleToUser(String username, String roleName) {
+
+        User user = findUserByUsername(username);
+        Role role = roleService.findRoleByName(roleName);
+        user.getRoles().add(role);
+
+        userRepository.save(user);
+    }
+
+    public User findUserByUsername(String username) {
+
+        return userRepository.findByUsername(username);
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+
+        User user = userRepository.findByUsername(username);
+        if (user == null) {
+            throw new UsernameNotFoundException("User not found in database");
+        }
+        Collection<SimpleGrantedAuthority> roles = new ArrayList<>();
+        user.getRoles().forEach(role -> roles.add(new SimpleGrantedAuthority(role.getName())));
+        return new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPassword(), roles);
     }
 
     protected User findUserById(String id) {

@@ -10,6 +10,12 @@ import java.util.stream.Collectors;
 @Component
 public class UserDtoConverter {
 
+    private final RoleDtoConverter roleDtoConverter;
+
+    public UserDtoConverter(RoleDtoConverter roleDtoConverter) {
+        this.roleDtoConverter = roleDtoConverter;
+    }
+
     public UserDto convert(User user) {
 
         return new UserDto(
@@ -18,7 +24,8 @@ public class UserDtoConverter {
                 user.getEmail(),
                 user.getFirstName(),
                 user.getLastName(),
-                user.getPassword()
+                user.getPassword(),
+                roleDtoConverter.convertToRoleDtoList(user.getRoles())
         );
     }
 

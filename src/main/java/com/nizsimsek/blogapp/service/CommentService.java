@@ -9,6 +9,8 @@ import com.nizsimsek.blogapp.model.Comment;
 import com.nizsimsek.blogapp.model.Post;
 import com.nizsimsek.blogapp.model.User;
 import com.nizsimsek.blogapp.repository.CommentRepository;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -33,7 +35,8 @@ public class CommentService {
 
     public CommentDto createComment(CreateCommentRequest request) {
 
-        User user = userService.findUserById(request.getAuthorId());
+        Authentication userDetails = SecurityContextHolder.getContext().getAuthentication();
+        User user = userService.findUserByUsername(userDetails.getName());
         Post post = postService.findPostById(request.getPostId());
 
         Comment comment = new Comment(
@@ -47,12 +50,22 @@ public class CommentService {
 
     public List<CommentDto> getCommentDtoList() {
 
-        return commentDtoConverter.convertToCommentDtoList(findComments());
+        Authentication userDetails = SecurityContextHolder.getContext().getAuthentication();
+        User user = userService.findUserByUsername(userDetails.getName());
+        List<Comment> commentList = findCommentList();
+        commentList.forEach(comment -> comment.setLiked(!commentIsLiked(comment.getId(), user.getId())));
+
+        return commentDtoConverter.convertToCommentDtoList(commentList);
     }
 
     public CommentDto getCommentById(String id) {
 
-        return commentDtoConverter.convert(findCommentById(id));
+        Authentication userDetails = SecurityContextHolder.getContext().getAuthentication();
+        User user = userService.findUserByUsername(userDetails.getName());
+        Comment comment = findCommentById(id);
+        comment.setLiked(!commentIsLiked(id, user.getId()));
+
+        return commentDtoConverter.convert(comment);
     }
 
     public CommentDto updateComment(String id, UpdateCommentRequest request) {
@@ -62,12 +75,13 @@ public class CommentService {
         Comment updatedComment = new Comment(
                 comment.getId(),
                 request.getContent(),
-                comment.getLike(),
-                comment.getDislike(),
+                comment.getLikes(),
+                comment.isLiked(),
                 comment.getCreatedDate(),
                 comment.getUpdatedDate(),
                 comment.getAuthor(),
-                comment.getPost()
+                comment.getPost(),
+                comment.getLikedUserList()
         );
 
         return commentDtoConverter.convert(commentRepository.save(updatedComment));
@@ -82,12 +96,36 @@ public class CommentService {
         return "Comment has been deleted with this id : " + id;
     }
 
+    public CommentDto likeCommentByCommentId(String id) {
+
+        Authentication userDetails = SecurityContextHolder.getContext().getAuthentication();
+        User user = userService.findUserByUsername(userDetails.getName());
+        Comment comment = findCommentById(id);
+
+        if (commentIsLiked(id, user.getId())) {
+            comment.getLikedUserList().add(user);
+            comment.setLikes(comment.getLikes() + 1);
+        } else {
+            comment.getLikedUserList().remove(user);
+            comment.setLikes(comment.getLikes() - 1);
+        }
+
+        commentRepository.save(comment);
+        return getCommentById(id);
+    }
+
+    protected Boolean commentIsLiked(String commentId, String userId) {
+
+        Integer trueOrFalse = commentRepository.findIsLiked(commentId, userId);
+        return trueOrFalse.equals(0);
+    }
+
     protected Comment findCommentById(String id) {
 
         return commentRepository.findById(id).orElseThrow(() -> new GeneralNotFoundException("Comment could not found this id : " + id));
     }
 
-    protected List<Comment> findComments() {
+    protected List<Comment> findCommentList() {
 
         return commentRepository.findAll();
     }

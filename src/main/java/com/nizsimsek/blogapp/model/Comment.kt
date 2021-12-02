@@ -8,23 +8,31 @@ import javax.persistence.*
 @Entity
 data class Comment @JvmOverloads constructor(
 
-        @Id
-        @GeneratedValue(generator = "UUID")
-        @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
-        val id: String? = "",
-        val content: String,
-        val like: Long = 0,
-        val dislike: Long = 0,
-        val createdDate: LocalDateTime = LocalDateTime.now(),
-        val updatedDate: LocalDateTime? = LocalDateTime.now(),
+    @Id
+    @GeneratedValue(generator = "UUID")
+    @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
+    val id: String? = "",
+    val content: String,
+    var likes: Long = 0,
+    var isLiked: Boolean? = false,
+    val createdDate: LocalDateTime = LocalDateTime.now(),
+    val updatedDate: LocalDateTime? = LocalDateTime.now(),
 
-        @ManyToOne(fetch = FetchType.EAGER)
-        @JoinColumn(name = "author_id", referencedColumnName = "id")
-        val author: User,
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "author_id", referencedColumnName = "id")
+    val author: User,
 
-        @ManyToOne(fetch = FetchType.EAGER)
-        @JoinColumn(name = "post_id", referencedColumnName = "id")
-        val post: Post
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "post_id", referencedColumnName = "id")
+    val post: Post,
+
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+        name = "comment_likes",
+        joinColumns = [JoinColumn(name = "comment_id", referencedColumnName = "id")],
+        inverseJoinColumns = [JoinColumn(name = "user_id", referencedColumnName = "id")]
+    )
+    val likedUserList: List<User> = emptyList(),
 ) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -38,6 +46,6 @@ data class Comment @JvmOverloads constructor(
 
     @Override
     override fun toString(): String {
-        return this::class.simpleName + "(content = $content , like = $like , dislike = $dislike , createdDate = $createdDate , updatedDate = $updatedDate , author = $author , post = $post )"
+        return this::class.simpleName + "(id = $id , content = $content , likes = $likes , isLiked = $isLiked , createdDate = $createdDate , updatedDate = $updatedDate , author = $author , post = $post )"
     }
 }
