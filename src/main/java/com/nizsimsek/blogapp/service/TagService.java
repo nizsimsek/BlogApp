@@ -58,9 +58,7 @@ public class TagService {
 
     public String deleteTagById(String id) {
 
-        Tag tag = findTagById(id);
-
-        tagRepository.delete(tag);
+        tagRepository.deleteById(id);
 
         return "Tag has been deleted with this id : " + id;
     }

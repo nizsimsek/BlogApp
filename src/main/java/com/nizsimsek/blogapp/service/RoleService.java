@@ -56,9 +56,7 @@ public class RoleService {
 
     public String deleteRoleById(String id) {
 
-        Role role = findRoleById(id);
-
-        roleRepository.delete(role);
+        roleRepository.deleteById(id);
 
         return "Role has been deleted with this id : " + id;
     }

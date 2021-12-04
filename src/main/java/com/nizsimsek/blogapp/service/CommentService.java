@@ -89,9 +89,7 @@ public class CommentService {
 
     public String deleteCommentById(String id) {
 
-        Comment comment = findCommentById(id);
-
-        commentRepository.delete(comment);
+        commentRepository.deleteById(id);
 
         return "Comment has been deleted with this id : " + id;
     }
@@ -99,7 +97,8 @@ public class CommentService {
     public CommentDto likeCommentByCommentId(String id) {
 
         Authentication userDetails = SecurityContextHolder.getContext().getAuthentication();
-        User user = userService.findUserByUsername(userDetails.getName());
+        org.springframework.security.core.userdetails.User user1 = (org.springframework.security.core.userdetails.User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        User user = userService.findUserByUsername(user1.getUsername());
         Comment comment = findCommentById(id);
 
         if (commentIsLiked(id, user.getId())) {

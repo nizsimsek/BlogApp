@@ -94,9 +94,7 @@ public class PostService {
 
     public String deletePostById(String id) {
 
-        Post post = findPostById(id);
-
-        postRepository.delete(post);
+        postRepository.deleteById(id);
 
         return "Post has been deleted with this id : " + id;
     }

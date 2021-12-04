@@ -82,9 +82,7 @@ public class UserService implements UserDetailsService {
 
     public String deleteUserById(String id) {
 
-        User user = findUserById(id);
-
-        userRepository.delete(user);
+        userRepository.deleteById(id);
 
         return "User has been deleted with this id : " + id;
     }
