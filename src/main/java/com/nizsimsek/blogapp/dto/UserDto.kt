@@ -14,7 +14,7 @@ data class UserDto @JvmOverloads constructor (
 
         @JsonIgnore
         val password: String,
-        val roleList: List<RoleDto>? = emptyList(),
+        val roleList: List<String>? = emptyList(),
         val postList: List<PostDto>? = emptyList(),
         val commentList: List<CommentDto>? = emptyList(),
         val likedPostList: List<PostDto>? = emptyList()

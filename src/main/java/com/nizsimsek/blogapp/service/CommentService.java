@@ -97,8 +97,7 @@ public class CommentService {
     public CommentDto likeCommentByCommentId(String id) {
 
         Authentication userDetails = SecurityContextHolder.getContext().getAuthentication();
-        org.springframework.security.core.userdetails.User user1 = (org.springframework.security.core.userdetails.User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        User user = userService.findUserByUsername(user1.getUsername());
+        User user = userService.findUserByUsername(userDetails.getName());
         Comment comment = findCommentById(id);
 
         if (commentIsLiked(id, user.getId())) {

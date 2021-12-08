@@ -2,6 +2,7 @@ package com.nizsimsek.blogapp.dto.converter;
 
 import com.nizsimsek.blogapp.dto.PostDto;
 import com.nizsimsek.blogapp.model.Post;
+import com.nizsimsek.blogapp.model.Tag;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -19,7 +20,8 @@ public class PostDtoConverter {
                 post.getLikes(),
                 post.isLiked(),
                 post.getCreatedDate(),
-                post.getUpdatedDate()
+                post.getUpdatedDate(),
+                post.getTagList().stream().map(Tag::getName).collect(Collectors.toList())
         );
     }
 

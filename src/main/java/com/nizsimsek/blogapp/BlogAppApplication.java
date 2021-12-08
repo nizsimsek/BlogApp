@@ -1,8 +1,10 @@
 package com.nizsimsek.blogapp;
 
 import com.nizsimsek.blogapp.dto.request.CreateRoleRequest;
+import com.nizsimsek.blogapp.dto.request.CreateTagRequest;
 import com.nizsimsek.blogapp.dto.request.CreateUserRequest;
 import com.nizsimsek.blogapp.service.RoleService;
+import com.nizsimsek.blogapp.service.TagService;
 import com.nizsimsek.blogapp.service.UserService;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -21,14 +23,12 @@ public class BlogAppApplication {
     BCryptPasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
-/*
+
     @Bean
-    CommandLineRunner runner(UserService userService, RoleService roleService) {
+    CommandLineRunner runner(UserService userService, RoleService roleService, TagService tagService) {
         return args -> {
             roleService.createRole(new CreateRoleRequest("ROLE_USER"));
-            roleService.createRole(new CreateRoleRequest("ROLE_MANAGER"));
             roleService.createRole(new CreateRoleRequest("ROLE_ADMIN"));
-            roleService.createRole(new CreateRoleRequest("ROLE_SUPER_ADMIN"));
 
             userService.createUser(
                     new CreateUserRequest("ali", "ali@email.com", "Ali",
@@ -45,11 +45,10 @@ public class BlogAppApplication {
 
             userService.addRoleToUser("ali", "ROLE_USER");
             userService.addRoleToUser("mehmet", "ROLE_USER");
-            userService.addRoleToUser("mehmet", "ROLE_MANAGER");
             userService.addRoleToUser("admin", "ROLE_ADMIN");
-            userService.addRoleToUser("admin", "ROLE_SUPER_ADMIN");
             userService.addRoleToUser("deniz", "ROLE_ADMIN");
-            userService.addRoleToUser("deniz", "ROLE_SUPER_ADMIN");
+
+            tagService.createTag(new CreateTagRequest("Teknoloji"));
         };
-    }*/
+    }
 }

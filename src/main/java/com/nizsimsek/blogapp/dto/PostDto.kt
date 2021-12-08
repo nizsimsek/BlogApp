@@ -15,8 +15,8 @@ data class PostDto @JvmOverloads constructor (
 
         @JsonInclude(JsonInclude.Include.NON_NULL)
         val updatedDate: LocalDateTime? = null,
+        val tagList: List<String>? = emptyList(),
         val author: UserDto? = null,
-        val tagList: List<TagDto>? = emptyList(),
         val likedUserList: List<UserDto>? = emptyList(),
         val commentList: List<CommentDto>? = emptyList()
 )

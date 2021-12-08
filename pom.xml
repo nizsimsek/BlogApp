@@ -18,6 +18,8 @@
         <kotlin.version>1.6.0</kotlin.version>
         <mysql.version>8.0.27</mysql.version>
         <openapi.version>1.5.12</openapi.version>
+        <java.jwt.version>3.18.2</java.jwt.version>
+        <apache.maven.compiler.version>3.8.1</apache.maven.compiler.version>
     </properties>
     <dependencies>
 
@@ -43,7 +45,7 @@
         <dependency>
             <groupId>com.auth0</groupId>
             <artifactId>java-jwt</artifactId>
-            <version>3.18.2</version>
+            <version>${java.jwt.version}</version>
         </dependency>
 
         <!-- DB -->
@@ -159,7 +161,11 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.8.1</version>
+                <version>${apache.maven.compiler.version}</version>
+                <configuration>
+                    <source>${java.version}</source>
+                    <target>${java.version}</target>
+                </configuration>
                 <executions>
                     <execution>
                         <id>default-compile</id>

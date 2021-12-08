@@ -1,6 +1,5 @@
 package com.nizsimsek.blogapp.controller;
 
-import com.nizsimsek.blogapp.dto.PostDto;
 import com.nizsimsek.blogapp.dto.UserDto;
 import com.nizsimsek.blogapp.dto.request.CreateUserRequest;
 import com.nizsimsek.blogapp.dto.request.RoleToUserRequest;

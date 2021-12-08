@@ -1,6 +1,7 @@
 package com.nizsimsek.blogapp.dto.converter;
 
 import com.nizsimsek.blogapp.dto.UserDto;
+import com.nizsimsek.blogapp.model.Role;
 import com.nizsimsek.blogapp.model.User;
 import org.springframework.stereotype.Component;
 
@@ -9,12 +10,6 @@ import java.util.stream.Collectors;
 
 @Component
 public class UserDtoConverter {
-
-    private final RoleDtoConverter roleDtoConverter;
-
-    public UserDtoConverter(RoleDtoConverter roleDtoConverter) {
-        this.roleDtoConverter = roleDtoConverter;
-    }
 
     public UserDto convert(User user) {
 
@@ -25,7 +20,7 @@ public class UserDtoConverter {
                 user.getFirstName(),
                 user.getLastName(),
                 user.getPassword(),
-                roleDtoConverter.convertToRoleDtoList(user.getRoles())
+                user.getRoles().stream().map(Role::getName).collect(Collectors.toList())
         );
     }
 
